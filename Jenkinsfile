@@ -8,22 +8,29 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'itt', 'uat', 'prod'], description: 'Select the deployment environment')
-        choice(name: 'APPLICATION_VERSION', choices: [''], description: 'Version Tag')
     }
 
     stages {
         stage('Fetch Tags') {
             steps {
                 script {
-                    // Clone the repository to list tags
                     withCredentials([usernamePassword(credentialsId: env.CREDENTIALS_ID, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        def tags = sh(script: "git ls-remote --tags https://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_URL}", returnStdout: true).trim().readLines().collect { it.split()[1].replaceAll('refs/tags/', '') }
-                        // Update the parameter with the fetched tags
-                        def job = Jenkins.instance.getItem(env.JOB_NAME)
-                        def paramDefinition = new hudson.model.ChoiceParameterDefinition('APPLICATION_VERSION', tags as String[], 'Choose a tag to deploy')
-                        def paramProperty = new hudson.model.ParametersDefinitionProperty(paramDefinition)
+                        // Fetch tags
+                        def tags = sh(script: "git ls-remote --tags https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@${env.GIT_URL}", returnStdout: true).trim().readLines().collect { it.split()[1].replaceAll('refs/tags/', '') }
+                        
+                        // Update the job parameters
+                        def job = Jenkins.instance.getItemByFullName(env.JOB_NAME)
+                        def newParams = new ArrayList(job.getProperty(hudson.model.ParametersDefinitionProperty.class).parameterDefinitions)
+                        
+                        // Find existing APPLICATION_VERSION parameter and replace it
+                        def applicationVersionParam = newParams.find { it.name == 'APPLICATION_VERSION' }
+                        if (applicationVersionParam) {
+                            newParams.remove(applicationVersionParam)
+                        }
+                        newParams.add(new hudson.model.ChoiceParameterDefinition('APPLICATION_VERSION', tags as String[], 'Choose a tag to deploy'))
+                        
                         job.removeProperty(hudson.model.ParametersDefinitionProperty)
-                        job.addProperty(paramProperty)
+                        job.addProperty(new hudson.model.ParametersDefinitionProperty(newParams))
                     }
                 }
             }
