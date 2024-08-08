@@ -7,7 +7,7 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'itt', 'uat', 'prod'], description: 'Select the deployment environment')
-        string(name: 'APPLICATION_VERSION', defaultValue: 'main', description: 'Version Tag')
+        gitParameter(name: 'APPLICATION_VERSION', defaultValue: 'main', description: 'Version Tag')
     }
 
     stages {
