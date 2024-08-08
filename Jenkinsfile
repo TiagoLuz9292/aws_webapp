@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Deploy') {
             when {
-                expression { params.APPLICATION_VERSION != 'master' }
+                expression { params.APPLICATION_VERSION != 'main' }
             }
             steps {
                 echo "Deploying version ${params.APPLICATION_VERSION} to ${params.ENVIRONMENT} environment"
