@@ -15,7 +15,6 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-
                         // Remove the repo directory if it exists
                         sh 'rm -rf repo'
 
@@ -24,15 +23,10 @@ pipeline {
                         // List tags and store them in a variable
                         def tags = sh(script: 'cd repo && git tag', returnStdout: true).trim().split("\n")
 
-                        // Add tags to the parameters for the next stages
-                        def tagParameterDefinition = new hudson.model.ChoiceParameterDefinition(
-                            'APPLICATION_VERSION', 
-                            tags as String[], 
-                            'Choose a tag to deploy'
-                        )
-                        currentBuild.getProject().addProperty(
-                            new hudson.model.ParametersDefinitionProperty(tagParameterDefinition)
-                        )
+                        // Check if the selected APPLICATION_VERSION is a valid tag
+                        if (!tags.contains(params.APPLICATION_VERSION)) {
+                            error "Selected version ${params.APPLICATION_VERSION} is not a valid tag."
+                        }
                     }
                 }
             }
@@ -44,6 +38,8 @@ pipeline {
             steps {
                 echo "Deploying version ${params.APPLICATION_VERSION} to ${params.ENVIRONMENT} environment"
                 // Add your deployment steps here
+                // Example:
+                // sh "ansible-playbook -i inventories/${params.ENVIRONMENT}/hosts playbooks/deploy.yml --extra-vars \"version=${params.APPLICATION_VERSION}\""
             }
         }
     }
