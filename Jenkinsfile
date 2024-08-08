@@ -16,7 +16,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         // Clone the repository to list tags
-                        sh "git clone https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/YourRepo/YourProject.git repo"
+                        sh "git clone https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/TiagoLuz9292/online_marketplace.git repo"
                         // List tags and store them in a variable
                         def tags = sh(script: 'cd repo && git tag', returnStdout: true).trim().split("\n")
 
