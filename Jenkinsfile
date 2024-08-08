@@ -2,13 +2,12 @@ pipeline {
     agent any
 
     environment {
-        GIT_URL = 'https://github.com/TiagoLuz9292/online_marketplace.git'
+        GIT_URL = 'github.com/TiagoLuz9292/online_marketplace.git'
         CREDENTIALS_ID = 'github' // replace with your credentials ID
     }
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'itt', 'uat', 'prod'], description: 'Select the deployment environment')
-        // Add a placeholder for the APPLICATION_VERSION which will be updated in the script section
         choice(name: 'APPLICATION_VERSION', choices: [''], description: 'Version Tag')
     }
 
