@@ -7,39 +7,30 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'itt', 'uat', 'prod'], description: 'Select the deployment environment')
-        gitParameter(name: 'APPLICATION_VERSION', defaultValue: 'main', description: 'Version Tag')
+        gitParameter(name: 'APPLICATION_VERSION', type: 'PT_TAG', branch: '', tagFilter: '*', defaultValue: 'main', description: 'Select a version tag', selectedValue: 'DEFAULT', sortMode: 'DESCENDING_SMART', useRepository: GIT_URL)
     }
 
     stages {
-        stage('Fetch Tags') {
+        stage('Checkout') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        // Remove the repo directory if it exists
-                        sh 'rm -rf repo'
-
-                        // Clone the repository to list tags
-                        sh "git clone https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}@github.com/TiagoLuz9292/online_marketplace.git repo"
-                        // List tags and store them in a variable
-                        def tags = sh(script: 'cd repo && git tag', returnStdout: true).trim().split("\n")
-
-                        // Check if the selected APPLICATION_VERSION is a valid tag
-                        if (!tags.contains(params.APPLICATION_VERSION)) {
-                            error "Selected version ${params.APPLICATION_VERSION} is not a valid tag."
-                        }
-                    }
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: false, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[credentialsId: 'github', url: GIT_URL]]
+                    ])
                 }
             }
         }
         stage('Deploy') {
-            when {
-                expression { params.APPLICATION_VERSION != 'main' }
-            }
             steps {
-                echo "Deploying version ${params.APPLICATION_VERSION} to ${params.ENVIRONMENT} environment"
-                // Add your deployment steps here
-                // Example:
-                // sh "ansible-playbook -i inventories/${params.ENVIRONMENT}/hosts playbooks/deploy.yml --extra-vars \"version=${params.APPLICATION_VERSION}\""
+                script {
+                    echo "Deploying version ${params.APPLICATION_VERSION} to ${params.ENVIRONMENT} environment"
+                    // Add your deployment steps here
+                }
             }
         }
     }
