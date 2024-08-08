@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+button.btn-link.nav-link {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.navbar-nav .nav-item .nav-link {
+  margin-right: 1rem;
+}
+
+.ms-auto .btn {
+  margin-left: 0.5rem;
+}

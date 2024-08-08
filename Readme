@@ -79,34 +79,32 @@ INIT THE PROJECT
 npm init -y
 
 2. Install Dependencies
-npm install express mongoose bcryptjs jsonwebtoken dotenv express-session cookie-parser
+npm install express mongoose bcryptjs jsonwebtoken dotenv express-session cookie-parser cors multer
 
 3. Project Structure
 
-online-marketplace/
+online_marketplace/
 │
-├── config/
-│   └── db.js
+├── backend/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── .env
+│   ├── app.js
+│   ├── package.json
+│   └── ...
 │
-├── controllers/
-│   ├── authController.js
-│   └── userController.js
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   ├── .env
+│   ├── package.json
+│   └── ...
 │
-├── middleware/
-│   ├── authMiddleware.js
-│   └── roleMiddleware.js
-│
-├── models/
-│   ├── userModel.js
-│   └── productModel.js
-│
-├── routes/
-│   ├── authRoutes.js
-│   └── userRoutes.js
-│
-├── .env
-├── app.js
-└── package.json
+├── .gitignore
+└── README.md
 
 
 
@@ -209,3 +207,15 @@ Comece a usar o MongoDB.
 Inicie uma sessão mongosh na mesma máquina host que o mongod. Você pode executar mongosh sem nenhuma opção de linha de comando para se conectar a um mongod que esteja sendo executado em seu host local com a porta padrão 27017.
 
 mongosh
+
+
+CREATE FRONTEND
+
+npx create-react-app .
+
+npm install axios react-router-dom bootstrap react-toastify
+
+
+SEND EMAIL WITH PASSWORD RESET TOKEN
+
+npm install nodemailer
