@@ -3,25 +3,29 @@ pipeline {
 
     environment {
         GIT_URL = 'https://github.com/TiagoLuz9292/online_marketplace.git'
+        CREDENTIALS_ID = 'github' // replace with your credentials ID
     }
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'itt', 'uat', 'prod'], description: 'Select the deployment environment')
-        gitParameter(name: 'APPLICATION_VERSION', type: 'PT_TAG', branch: '', tagFilter: '*', defaultValue: 'main', description: 'Select a version tag', selectedValue: 'DEFAULT', sortMode: 'DESCENDING_SMART', useRepository: GIT_URL)
+        // Add a placeholder for the APPLICATION_VERSION which will be updated in the script section
+        choice(name: 'APPLICATION_VERSION', choices: [''], description: 'Version Tag')
     }
 
     stages {
-        stage('Checkout') {
+        stage('Fetch Tags') {
             steps {
                 script {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/main']],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: false, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[credentialsId: 'github', url: GIT_URL]]
-                    ])
+                    // Clone the repository to list tags
+                    withCredentials([usernamePassword(credentialsId: env.CREDENTIALS_ID, passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        def tags = sh(script: "git ls-remote --tags https://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_URL}", returnStdout: true).trim().readLines().collect { it.split()[1].replaceAll('refs/tags/', '') }
+                        // Update the parameter with the fetched tags
+                        def job = Jenkins.instance.getItem(env.JOB_NAME)
+                        def paramDefinition = new hudson.model.ChoiceParameterDefinition('APPLICATION_VERSION', tags as String[], 'Choose a tag to deploy')
+                        def paramProperty = new hudson.model.ParametersDefinitionProperty(paramDefinition)
+                        job.removeProperty(hudson.model.ParametersDefinitionProperty)
+                        job.addProperty(paramProperty)
+                    }
                 }
             }
         }
