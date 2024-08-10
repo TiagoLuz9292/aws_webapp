@@ -31,11 +31,11 @@ exports.addProduct = [
     upload.single('image'),
     async (req, res) => {
         try {
-            const { name, description, price } = req.body;
+            const { name, description, price, currency } = req.body;
             const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
-            const user = req.user._id; // Get the user ID from the request
+            const user = req.user.userId; // Get the user ID from the request
 
-            const newProduct = new Product({ name, description, price, imageUrl, user });
+            const newProduct = new Product({ name, description, price, currency, imageUrl, user });
             await newProduct.save();
             res.status(201).json({ message: 'Product added successfully' });
         } catch (err) {

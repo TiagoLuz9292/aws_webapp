@@ -2,6 +2,21 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3001/api';
 
+
+const handleExpiredToken = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    window.location.href = '/login';
+};
+
+const handleError = (error) => {
+    if (error.response && error.response.data.expired) {
+        handleExpiredToken();
+    } else {
+        throw error;
+    }
+};
+
 export const register = async (userData) => {
     try {
         const response = await axios.post(`${API_URL}/auth/register`, userData);
@@ -28,8 +43,7 @@ export const requestPasswordReset = async (email) => {
         const response = await axios.post(`${API_URL}/auth/request-password-reset`, { email });
         return response.data;
     } catch (error) {
-        console.error('Error during password reset request:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -38,8 +52,7 @@ export const resetPassword = async (data) => {
         const response = await axios.post(`${API_URL}/auth/reset-password`, data);
         return response.data;
     } catch (error) {
-        console.error('Error during password reset:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -53,8 +66,7 @@ export const getProfile = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error during fetching profile:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -69,8 +81,7 @@ export const addProduct = async (productData) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error during adding product:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -94,8 +105,7 @@ export const getUserProducts = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error during fetching user products:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -109,8 +119,7 @@ export const deleteProduct = async (productId) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error during deleting product:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
     }
 };
 
@@ -124,7 +133,35 @@ export const deleteAccount = async () => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error during deleting account:', error.response ? error.response.data : error.message);
-        throw error;
+        handleError(error);
+    }
+};
+
+export const addPaymentMethod = async (paymentData) => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axios.post(`${API_URL}/users/profile/payment-method`, paymentData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+export const deletePaymentMethod = async (paymentData) => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await axios.delete(`${API_URL}/users/profile/payment-method`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            data: paymentData // Send the payment data in the request body
+        });
+        return response.data;
+    } catch (error) {
+        handleError(error);
     }
 };

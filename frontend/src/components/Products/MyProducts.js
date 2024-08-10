@@ -28,23 +28,22 @@ const MyProducts = () => {
     };
 
     return (
-        <div className="container mt-5">
-            {error && <p className="text-danger">{error}</p>}
-            <div className="row">
-                {products.map(product => (
-                    <div key={product._id} className="col-md-4">
-                        <div className="card mb-4">
-                            <img src={`http://localhost:3001${product.imageUrl}`} className="card-img-top" alt={product.name} />
-                            <div className="card-body">
-                                <h5 className="card-title">{product.name}</h5>
-                                <p className="card-text">{product.description}</p>
-                                <p className="card-text">${product.price.toFixed(2)}</p>
-                                <button onClick={() => handleDelete(product._id)} className="btn btn-danger">Delete</button>
+        <div className="product-list-container">
+            <div className="product-list">
+                {error && <p className="text-danger">{error}</p>}
+                    {products.map(product => (
+                        <div key={product._id} className="product-item">
+                            <div className="card">
+                                <img src={`http://localhost:3001${product.imageUrl}`} className="card-img-top" alt={product.name} />
+                                <div className="card-body">
+                                    <p className="card-text product-description">{product.description}</p>
+                                    <p className="card-text product-price">${product.price.toFixed(2)}</p>
+                                    <button onClick={() => handleDelete(product._id)} className="btn btn-danger">Delete</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+            </div>  
         </div>
     );
 };

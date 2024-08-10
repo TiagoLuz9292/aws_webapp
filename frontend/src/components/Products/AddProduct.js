@@ -27,6 +27,7 @@ const AddProduct = () => {
         data.append('name', formData.name);
         data.append('description', formData.description);
         data.append('price', formData.price);
+        data.append('currency', formData.currency);
         if (image) {
             data.append('image', image);
         }
@@ -53,14 +54,18 @@ const AddProduct = () => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="price" className="form-label">Price</label>
-                    <input type="number" className="form-control" id="price" name="price" onChange={handleChange} />
+                    <input type="number" className="form-control" id="price" name="price" onChange={handleChange} step="0.01"  />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="currency" className="form-label">currency</label>
+                    <input type="text" className="form-control" id="currency" name="currency" onChange={handleChange} />
                 </div>
                 <div className="mb-3">
                     <label htmlFor="image" className="form-label">Image</label>
                     <input type="file" className="form-control" id="image" name="image" accept="image/*" onChange={handleImageChange} />
                 </div>
                 <button type="submit" className="btn btn-primary">Add Product</button>
-                {message && <p className="mt-3">{message}</p>}
+                {message && <p className="mt-3">{typeof message === 'string' ? message : JSON.stringify(message)}</p>}
             </form>
         </div>
     );

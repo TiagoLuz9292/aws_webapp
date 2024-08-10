@@ -213,7 +213,7 @@ CREATE FRONTEND
 
 npx create-react-app .
 
-npm install axios react-router-dom bootstrap react-toastify
+npm install axios react-router-dom bootstrap react-toastify reactstrap react-icons
 
 
 SEND EMAIL WITH PASSWORD RESET TOKEN

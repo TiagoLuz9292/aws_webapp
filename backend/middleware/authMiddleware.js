@@ -12,7 +12,11 @@ const auth = (req, res, next) => {
         req.user = { userId: decoded.userId };
         next();
     } catch (err) {
-        res.status(401).json({ message: 'Token is not valid' });
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired', expired: true });
+        } else {
+            return res.status(401).json({ message: 'Token is not valid' });
+        }
     }
 };
 
