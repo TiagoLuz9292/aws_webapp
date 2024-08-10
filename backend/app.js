@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
@@ -14,8 +15,12 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+
+// Generate a new secret on every restart
+const sessionSecret = crypto.randomBytes(64).toString('hex');
+
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }

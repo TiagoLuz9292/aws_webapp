@@ -58,7 +58,7 @@ const Login = () => {
                     <input type="password" className="form-control" id="password" name="password" onChange={handleChange} />
                 </div>
                 <button type="submit" className="btn btn-primary">Login</button>
-                {error && <p className="text-danger mt-3">{error}</p>}
+                {error && <p className="text-danger mt-3">{typeof error === 'object' ? JSON.stringify(error) : error}</p>}
             </form>
         </div>
     );
