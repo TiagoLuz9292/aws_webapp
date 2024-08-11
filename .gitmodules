@@ -1,6 +1,3 @@
-[submodule "online_marketplace_infrastructure"]
-	path = online_marketplace_infrastructure
-	url = https://github.com/TiagoLuz9292/online_marketplace_infrastructure.git
 [submodule "online_marketplace_backend"]
 	path = online_marketplace_backend
 	url = https://github.com/TiagoLuz9292/online_marketplace_backend.git
